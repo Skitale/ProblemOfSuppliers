@@ -1,11 +1,36 @@
 package com.traning.task4;
 
+import com.traning.task4.parsers.Parser;
+import com.traning.task4.structures.Model;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
+    public static final String PATH_TO_RESOURCES = "./resources/";
+
     public static void main(String[] args) {
-        Vertex s = new Vertex(-1);
-        Vertex t = new Vertex(-2);
+        List<Model> models = Parser.parseFolderWithFiles(PATH_TO_RESOURCES);
+        List<GraphNet> basicGraphNets = new ArrayList<>();
+        for(Model m : models){
+            GraphNet g = GraphUtils.getBasicGraphStructureFromModel(m);
+            basicGraphNets.add(g);
+            int sum = 0;
+            for(int i = 0; i < m.getM(); i++) {
+                for (int j = 0; j < m.getT(); j++) {
+                    sum += m.getC(i, j);
+                }
+            }
+            System.out.println("Sov = " + sum);
+        }
+        for(GraphNet g : basicGraphNets){
+            int maxFlow = new AlgFordaFalc(g).solve();
+            System.out.println("Max flow = " + maxFlow);
+        }
+
+
+        Vertex s = new Vertex("-1");
+        Vertex t = new Vertex("-2");
         GraphNet graphNet = new GraphNet(s, t);
         /*graphNet.addVertex(1); // sol = 10
         graphNet.addVertex(2);
@@ -48,18 +73,18 @@ public class Main {
         graphNet.addEdge(5, 6, 7);
         graphNet.addEdge(6, -2, 81);*/
 
-        graphNet.addVertex(1); // sol = 7
-        graphNet.addVertex(2);
-        graphNet.addVertex(3);
-        graphNet.addVertex(4);
-        graphNet.addEdge(-1, 1, 5);
-        graphNet.addEdge(-1, 2, 3);
-        graphNet.addEdge(1, 3, 2);
-        graphNet.addEdge(1, 2, 4);
-        graphNet.addEdge(2, 4, 5);
-        graphNet.addEdge(3, -2, 7);
-        graphNet.addEdge(4, 3, 6);
-        graphNet.addEdge(4, -2, 5);
+        graphNet.addVertex("1"); // sol = 7
+        graphNet.addVertex("2");
+        graphNet.addVertex("3");
+        graphNet.addVertex("4");
+        graphNet.addEdge("-1", "1", 5);
+        graphNet.addEdge("-1", "2", 3);
+        graphNet.addEdge("1", "3", 2);
+        graphNet.addEdge("1", "2", 4);
+        graphNet.addEdge("2", "4", 5);
+        graphNet.addEdge("3", "-2", 7);
+        graphNet.addEdge("4", "3", 6);
+        graphNet.addEdge("4", "-2", 5);
         AlgFordaFalc alg = new AlgFordaFalc(graphNet);
         int d = alg.solve();
         System.out.println(" max flow = " + d);
