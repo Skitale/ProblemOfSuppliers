@@ -6,12 +6,12 @@ import java.util.List;
 public class Vertex {
     private boolean traversalLabel;
     private List<Edge> containIn;
-    private int num;
+    private String name;
     private int bandwidth = -1;
     private Vertex prevVertex = null;
 
-    public Vertex(int num) {
-        this.num = num;
+    public Vertex(String name) {
+        this.name = name;
         this.traversalLabel = false;
         containIn = new ArrayList<>();
     }
@@ -26,8 +26,8 @@ public class Vertex {
         return true;
     }
 
-    public int getNum() {
-        return num;
+    public String getName() {
+        return name;
     }
 
     public boolean isTraversalLabel() {
@@ -77,7 +77,7 @@ public class Vertex {
     public String toString() {
         return "Vertex{" +
                 "tl=" + traversalLabel +
-                ", num=" + num +
+                ", n=" + name +
                 '}';
     }
 }

@@ -17,7 +17,7 @@ public class GraphNet {
         vertices.add(t);
     }
 
-    public void addEdge(int from, int to, int bandwidth, int flowRate, boolean isDirectEdge) {
+    public void addEdge(String from, String to, int bandwidth, int flowRate, boolean isDirectEdge) {
         Vertex vFrom = tryFindVertexByNum(from);
         Vertex vTo = tryFindVertexByNum(to);
         if (vFrom != null && vTo != null) {
@@ -30,33 +30,33 @@ public class GraphNet {
         }
     }
 
-    public void addEdge(int from, int to, int bandwidth) {
+    public void addEdge(String from, String to, int bandwidth) {
         this.addEdge(from, to, bandwidth, 0, true);
     }
 
-    private Edge searchAlternativeEdge(int from, int to){
+    private Edge searchAlternativeEdge(String from, String to){
         for(Edge e : edgeList){
-            if(e.getToVertex().getNum() == from
-                    && e.getFromVertex().getNum() == to){
+            if(e.getToVertex().getName().equals(from)
+                    && e.getFromVertex().getName().equals(to)){
                 return e;
             }
         }
         return null;
     }
 
-    public void addVertex(int num) {
-        Vertex v = tryFindVertexByNum(num);
+    public void addVertex(String name) {
+        Vertex v = tryFindVertexByNum(name);
         if (v == null) {
-            v = new Vertex(num);
+            v = new Vertex(name);
             vertices.add(v);
         }/* else {
             System.out.println("Vertex is already exist");
         }*/
     }
 
-    private Vertex tryFindVertexByNum(int num) {
+    private Vertex tryFindVertexByNum(String name) {
         for (Vertex v : vertices) {
-            if (v.getNum() == num) {
+            if (v.getName().equals(name)) {
                 return v;
             }
         }
