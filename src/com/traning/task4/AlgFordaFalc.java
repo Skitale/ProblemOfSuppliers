@@ -50,7 +50,11 @@ public class AlgFordaFalc {
     private int getBandwidthIncision(List<Edge> incision){
         int sum = 0;
         for(Edge e : incision){
-            sum += e.getBandwidth();
+            if(e.isDirectEdge()) {
+                sum += e.getFlowRate();
+            } else {
+                sum -= e.getCanPull();
+            }
         }
         return sum;
     }

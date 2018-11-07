@@ -85,7 +85,7 @@ public class GraphNet {
             v.setPrevVertex(null);
         }
         queue.add(s);
-        while (!queue.isEmpty()) {
+        l1: while (!queue.isEmpty()) {
             Vertex v = queue.remove();
             List<Vertex> listVertices = v.getAllToAdjacentVertices();
             for (Vertex lv : listVertices) {
@@ -93,14 +93,15 @@ public class GraphNet {
                 if (lv.getBandwidth() == 0 && edgeWith.getCanPull() > 0) {
                     lv.setBandwidth(Math.min(v.getBandwidth(), edgeWith.getCanPull()));
                     lv.setPrevVertex(v);
-                    queue.add(lv);
-                }
-
-                if (lv.equals(t)) {
-                    break;
+                    if(!lv.equals(t)){
+                        queue.add(lv);
+                    } else {
+                        break l1;
+                    }
                 }
             }
         }
+        queue.add(t);
         List<Vertex> result = getChain();
         Collections.reverse(result);
         return result;
