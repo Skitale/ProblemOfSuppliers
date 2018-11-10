@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) {
         List<Model> models = Parser.parseFolderWithFiles(PATH_TO_RESOURCES);
         List<GraphNet> basicGraphNets = new ArrayList<>();
-        for(Model m : models){
+        /*for(Model m : models){
             GraphNet g = GraphUtils.getBasicGraphStructureFromModel(m);
             basicGraphNets.add(g);
         }
@@ -21,6 +21,10 @@ public class Main {
             Solution solution = new AlgFordaFalc(g).solve();
             System.out.println("Max flow = " + solution.getMaxFlow());
             System.out.println("Upper bound for max flow = " + solution.getUpperBoundForMaxFlow());
+        }*/
+        for(Model m : models){
+            Solution solution = new AlgFoundCosumersWithStorage(m).solve();
+            System.out.println(solution.getParamByKey("numConsumers"));
         }
 
 
