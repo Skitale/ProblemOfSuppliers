@@ -64,6 +64,16 @@ public class Vertex {
         return result;
     }
 
+    public List<Vertex> getAllFromAdjacentVertices(){
+        List<Vertex> result = new ArrayList<>();
+        for(Edge e : containIn){
+            if(e.getToVertex().equals(this)){
+                result.add(e.getFromVertex());
+            }
+        }
+        return result;
+    }
+
     public Edge getEdgeWithTo(Vertex v){
         for(Edge e : containIn){
             if(e.getToVertex().equals(v)){

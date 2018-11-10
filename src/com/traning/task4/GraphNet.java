@@ -101,7 +101,6 @@ public class GraphNet {
                 }
             }
         }
-        queue.add(t);
         List<Vertex> result = getChain();
         Collections.reverse(result);
         return result;

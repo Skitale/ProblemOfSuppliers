@@ -2,6 +2,7 @@ package com.traning.task4;
 
 import com.traning.task4.parsers.Parser;
 import com.traning.task4.structures.Model;
+import com.traning.task4.structures.Solution;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,17 +16,11 @@ public class Main {
         for(Model m : models){
             GraphNet g = GraphUtils.getBasicGraphStructureFromModel(m);
             basicGraphNets.add(g);
-            int sum = 0;
-            for(int i = 0; i < m.getM(); i++) {
-                for (int j = 0; j < m.getT(); j++) {
-                    sum += m.getC(i, j);
-                }
-            }
-            System.out.println("Sov = " + sum);
         }
         for(GraphNet g : basicGraphNets){
-            int maxFlow = new AlgFordaFalc(g).solve();
-            System.out.println("Max flow = " + maxFlow);
+            Solution solution = new AlgFordaFalc(g).solve();
+            System.out.println("Max flow = " + solution.getMaxFlow());
+            System.out.println("Upper bound for max flow = " + solution.getUpperBoundForMaxFlow());
         }
 
 
@@ -85,8 +80,8 @@ public class Main {
         graphNet.addEdge("3", "-2", 7);
         graphNet.addEdge("4", "3", 6);
         graphNet.addEdge("4", "-2", 5);
-        AlgFordaFalc alg = new AlgFordaFalc(graphNet);
+        /*AlgFordaFalc alg = new AlgFordaFalc(graphNet);
         int d = alg.solve();
-        System.out.println(" max flow = " + d);
+        System.out.println(" max flow = " + d);*/
     }
 }

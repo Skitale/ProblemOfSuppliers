@@ -64,4 +64,17 @@ public class GraphUtils {
 
         return graph;
     }
+
+    public static int getUpperBoundForMaxFlowBasic(GraphNet g){
+        int sum = 0;
+        Vertex t = g.getT();
+        List<Vertex> list = t.getAllFromAdjacentVertices();
+        for(Vertex v : list){
+            Edge e = v.getEdgeWithTo(t);
+            if(e != null){
+                sum += e.getBandwidth();
+            }
+        }
+        return sum;
+    }
 }

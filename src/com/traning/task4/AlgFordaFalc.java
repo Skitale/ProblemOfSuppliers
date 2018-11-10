@@ -1,5 +1,7 @@
 package com.traning.task4;
 
+import com.traning.task4.structures.Solution;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +12,7 @@ public class AlgFordaFalc {
         this.graphNet = graphNet;
     }
 
-    public int solve() {
+    public Solution solve() {
         GraphNet modGraph = GraphUtils.getModGraphWithInverseEdge(graphNet);
         while (true) {
             List<Vertex> vertexList = modGraph.getUpFlow();
@@ -31,7 +33,8 @@ public class AlgFordaFalc {
         }
 
         List<Edge> incision = getIncisionGraph(modGraph);
-        return getBandwidthIncision(incision);
+        Solution solution = new Solution(getBandwidthIncision(incision), GraphUtils.getUpperBoundForMaxFlowBasic(graphNet));
+        return solution;
     }
 
     private List<Edge> getIncisionGraph(GraphNet graphNet){
@@ -51,7 +54,7 @@ public class AlgFordaFalc {
         int sum = 0;
         for(Edge e : incision){
             if(e.isDirectEdge()) {
-                sum += e.getFlowRate();
+                sum += e.getBandwidth();
             } else {
                 sum -= e.getCanPull();
             }
