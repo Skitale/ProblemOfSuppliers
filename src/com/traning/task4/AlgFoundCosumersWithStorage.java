@@ -27,9 +27,9 @@ public class AlgFoundCosumersWithStorage {
             }
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("{");
+        sb.append(listConsumers.size()).append(" : {");
         for(Integer i : listConsumers){
-            sb.append(i);
+            sb.append(i + 1);
             if(!listConsumers.get(listConsumers.size() - 1).equals(i)){
                 sb.append(", ");
             }
