@@ -88,4 +88,22 @@ public class Model {
     public String getName() {
         return name;
     }
+
+    public int getSumA(){
+        int sum = 0;
+        for (int anA : a) {
+            sum += anA;
+        }
+        return sum;
+    }
+
+    public int getSumS(){
+        int sum = 0;
+        for(int i = 0; i < c.length; i++){
+            for(int j = 0; j < c[i].length; j++){
+                sum += c[i][j];
+            }
+        }
+        return sum;
+    }
 }

@@ -26,6 +26,12 @@ public class Edge {
         addEdgeInVertex(to);
     }
 
+    public void reset(){
+        alternativeEdge = null;
+        flowRate = 0;
+        canPull = 0;
+    }
+
     public int getCanPull() {
         return canPull;
     }

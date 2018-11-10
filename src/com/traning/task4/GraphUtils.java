@@ -65,6 +65,52 @@ public class GraphUtils {
         return graph;
     }
 
+    public static GraphNet getBasicWithStorageGraphStructureFromModel(Model m, int e){
+        GraphNet g = getBasicGraphStructureFromModel(m);
+        changeStotageForAllConsumers(m, g, e);
+        return g;
+    }
+
+    public static GraphNet changeStotageForAllConsumers(Model m, GraphNet source, int e){
+        for(int i = 0; i < m.getM(); i++){
+            for(int ta = 0; ta < m.getT() - 1; ta++){
+                String vConsumerFrom = Integer.toString(i) + "," + Integer.toString(ta) + "c";
+                String vConsumerTo = Integer.toString(i) + "," + Integer.toString(ta + 1) + "c";
+                source.changeExistEdgeOrAddNew(vConsumerFrom, vConsumerTo, e);
+            }
+
+        }
+        return source;
+    }
+
+    public static void deleteStorageBy(GraphNet g, Model m, int numConsumer){
+        if(numConsumer >= m.getM()) return;
+        for(int ta = 0; ta < m.getT() - 1; ta++){
+            String vConsumerFrom = Integer.toString(numConsumer) + "," + Integer.toString(ta) + "c";
+            String vConsumerTo = Integer.toString(numConsumer) + "," + Integer.toString(ta + 1) + "c";
+            g.changeExistEdgeOrAddNew(vConsumerFrom, vConsumerTo, 0);
+        }
+    }
+
+    public static void addStorageBy(GraphNet g, Model m, int numConsumer, int e){
+        if(numConsumer >= m.getM()) return;
+        for(int ta = 0; ta < m.getT() - 1; ta++){
+            String vConsumerFrom = Integer.toString(numConsumer) + "," + Integer.toString(ta) + "c";
+            String vConsumerTo = Integer.toString(numConsumer) + "," + Integer.toString(ta + 1) + "c";
+            g.changeExistEdgeOrAddNew(vConsumerFrom, vConsumerTo, e);
+        }
+    }
+
+    public static int getSumAFromGraph(GraphNet g){
+        Vertex s = g.getS();
+        List<Vertex> list = s.getAllToAdjacentVertices();
+        int sum = 0;
+        for(Vertex v : list){
+            sum += v.getBandwidth();
+        }
+        return sum;
+    }
+
     public static int getUpperBoundForMaxFlowBasic(GraphNet g){
         int sum = 0;
         Vertex t = g.getT();

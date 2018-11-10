@@ -30,6 +30,25 @@ public class GraphNet {
         }
     }
 
+    public void changeExistEdgeOrAddNew(String from, String to, int bandwidth){
+        Edge e = searchEdge(from, to);
+        if (e == null) {
+            addEdge(from, to, bandwidth);
+            return;
+        }
+        e.setBandwidth(bandwidth);
+    }
+
+    public void reset(){
+        for(Vertex v : vertices){
+            v.reset();
+        }
+
+        for(Edge e : edgeList){
+            e.reset();
+        }
+    }
+
     public void addEdge(String from, String to, int bandwidth) {
         this.addEdge(from, to, bandwidth, 0, true);
     }
@@ -38,6 +57,16 @@ public class GraphNet {
         for(Edge e : edgeList){
             if(e.getToVertex().getName().equals(from)
                     && e.getFromVertex().getName().equals(to)){
+                return e;
+            }
+        }
+        return null;
+    }
+
+    private Edge searchEdge(String from, String to){
+        for(Edge e : edgeList){
+            if(e.getToVertex().getName().equals(to)
+                    && e.getFromVertex().getName().equals(from)){
                 return e;
             }
         }

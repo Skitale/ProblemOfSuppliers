@@ -22,6 +22,12 @@ public class Vertex {
         }
     }
 
+    public void reset(){
+        containIn.clear();
+        prevVertex = null;
+        traversalLabel = false;
+    }
+
     private boolean isExistInEdge(Edge e){
         return true;
     }
