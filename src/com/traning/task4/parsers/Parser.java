@@ -25,7 +25,7 @@ public class Parser {
             if(s.hasNextInt()){
                 T = s.nextInt();
             }
-            model = new Model(n, m, T, "test");
+            model = new Model(n, m, T, file.getName());
             s.next();
             s.useDelimiter("(\r\n)|( )");
             for(int i = 0; i < n; i++){
