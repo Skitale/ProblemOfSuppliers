@@ -22,7 +22,7 @@ public class AlgFoundMinStorage {
             GraphUtils.changeStotageForAllConsumers(m, g, mid);
             Solution tmpSolution = new AlgFordaFalc(g).solve();
             if(tmpSolution.getMaxFlow() == key){
-                tmpSolution.addParam("e", mid);
+                tmpSolution.addParam("minE", mid);
                 result = tmpSolution;
                 rightBound = mid;
             } else {

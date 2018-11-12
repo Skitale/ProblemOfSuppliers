@@ -21,7 +21,7 @@ public class AlgFoundCosumersWithStorage {
         for(int i = 0; i < m.getM(); i++){
             GraphUtils.deleteStorageBy(g, m, i);
             solution = new AlgFordaFalc(g).solve();
-            if(solution.getUpperBoundForMaxFlow() != solution.getMaxFlow()){
+            if(m.getSumS() != solution.getMaxFlow()){
                 GraphUtils.addStorageBy(g, m, i, maxStorage);
                 listConsumers.add(i);
             }
