@@ -19,7 +19,7 @@ public class AlgGenFoundConsumersWithStorage {
         Solution sol = new AlgFordaFalc(g).solve();
         if(sol.getUpperBoundForMaxFlow() != sol.getMaxFlow()) return null;
 
-        GenAlg ga = new GenAlg(m.getN() * 100, m.getN(), m.getM(), 0.1d);
+        GenAlg ga = new GenAlg(30, m.getM() * 2, m.getM(), 0.02d);
         ga.setModel(m);
         Genome genome = ga.solve();
         Solution solution = ga.getFitnessFunction().getSolutionForGenome(genome);

@@ -25,9 +25,9 @@ public class Main {
         }*/
         for(Model m : models){
             System.out.print("task: " + m.getName() + " ... ");
-            Solution solutionT1 = new AlgFoundMinStorage(m).solve();
+            //Solution solutionT1 = new AlgFoundMinStorage(m).solve();
             Solution solutionT2 = new AlgGenFoundConsumersWithStorage(m).solve();
-            System.out.print( "min E for all consumers = " + solutionT1.getParamByKey("minE") + ", ");
+            //System.out.print( "min E for all consumers = " + solutionT1.getParamByKey("minE") + ", ");
             System.out.println("num consumers with max E = " + solutionT2.getParamByKey("numConsumers"));
         }
 

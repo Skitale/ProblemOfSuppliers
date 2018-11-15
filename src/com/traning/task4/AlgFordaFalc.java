@@ -1,22 +1,26 @@
 package com.traning.task4;
 
+import com.traning.task4.structures.Model;
 import com.traning.task4.structures.Solution;
+import com.traning.task4.utils.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AlgFordaFalc {
     private GraphNet graphNet;
+    private GraphNet modGraphNet;
 
     public AlgFordaFalc(GraphNet graphNet) {
         this.graphNet = graphNet;
+        this.modGraphNet = GraphUtils.getModGraphWithInverseEdge(graphNet);
     }
 
     public Solution solve() {
-        GraphNet modGraph = GraphUtils.getModGraphWithInverseEdge(graphNet);
+        clear();
         while (true) {
-            List<Vertex> vertexList = modGraph.getUpFlow();
-            if (vertexList.size() == 1 && vertexList.contains(modGraph.getT())) {
+            List<Vertex> vertexList = modGraphNet.getUpFlow();
+            if (vertexList.size() == 1 && vertexList.contains(modGraphNet.getT())) {
                 break;
             }
 
@@ -32,9 +36,25 @@ public class AlgFordaFalc {
             }
         }
 
-        List<Edge> incision = getIncisionGraph(modGraph);
+        List<Edge> incision = getIncisionGraph(modGraphNet);
+        if(getBandwidthIncision(incision) <= 0){
+            System.out.println("error");
+        }
         Solution solution = new Solution(getBandwidthIncision(incision), GraphUtils.getUpperBoundForMaxFlowBasic(graphNet));
         return solution;
+    }
+
+    private void clear(){
+        for(Edge e : modGraphNet.getEdgeList()){
+            if(e.isDirectEdge()) {
+                e.setCanPull(e.getBandwidth());
+                e.setFlowRate(0);
+                Edge altE = e.getAlternativeEdge();
+                if (altE == null) throw new UnsupportedOperationException();
+                altE.setCanPull(0);
+                altE.setFlowRate(0);
+            }
+        }
     }
 
     private List<Edge> getIncisionGraph(GraphNet graphNet){
@@ -89,6 +109,11 @@ public class AlgFordaFalc {
             result.add(fromToEdge);
         }
         return result;
+    }
+
+    public void addOrChangeStorageToConsumer(Model m, int index, int e){
+        Validator.validateIndex(index, m.getM());
+        GraphUtils.addStorageBy(modGraphNet, m, index, e);
     }
 
     public GraphNet getGraphNet() {

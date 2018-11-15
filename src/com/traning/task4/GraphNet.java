@@ -1,5 +1,8 @@
 package com.traning.task4;
 
+import com.traning.task4.structures.Model;
+import com.traning.task4.utils.Validator;
+
 import java.util.*;
 
 public class GraphNet {
@@ -37,6 +40,7 @@ public class GraphNet {
             return;
         }
         e.setBandwidth(bandwidth);
+        e.setCanPull(bandwidth);
     }
 
     public void reset(){

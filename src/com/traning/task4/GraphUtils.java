@@ -56,7 +56,7 @@ public class GraphUtils {
                 for(int j = 0; j < m.getT(); j++){
                     String vProd = Integer.toString(prod - 1) + "," + Integer.toString(j) + "b";
                     String vCons = Integer.toString(i) + "," + Integer.toString(j) + "c";
-                    graph.addEdge(vProd, vCons, Integer.MAX_VALUE/*m.getB(prod - 1, j)*/);
+                    graph.addEdge(vProd, vCons, m.getB(prod - 1, j));
                 }
             }
         }
