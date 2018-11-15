@@ -16,7 +16,7 @@ public class AlgFoundMinStorage {
         int mid = 0;
         int key = m.getSumS();
         GraphNet g = GraphUtils.getBasicWithStorageGraphStructureFromModel(m, rightBound);
-        Solution result = null;
+        Solution result = new AlgFordaFalc(g).solve();
         while (!(leftBound >= rightBound)) {
             mid = leftBound + (int)((double)(rightBound - leftBound) / 2d);
             GraphUtils.changeStotageForAllConsumers(m, g, mid);

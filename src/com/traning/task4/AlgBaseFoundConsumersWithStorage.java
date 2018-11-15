@@ -6,17 +6,18 @@ import com.traning.task4.structures.Solution;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlgFoundCosumersWithStorage {
+public class AlgBaseFoundConsumersWithStorage {
     private Model m;
 
-    public AlgFoundCosumersWithStorage(Model m) {
+    public AlgBaseFoundConsumersWithStorage(Model m) {
         this.m = m;
     }
 
     public Solution solve() {
         int maxStorage = m.getSumA();
         GraphNet g = GraphUtils.getBasicWithStorageGraphStructureFromModel(m, maxStorage);
-        Solution solution = null;
+        Solution solution = new AlgFordaFalc(g).solve();
+        if(solution.getUpperBoundForMaxFlow() != solution.getMaxFlow()) return null;
         List<Integer> listConsumers = new ArrayList<>();
         for(int i = 0; i < m.getM(); i++){
             GraphUtils.deleteStorageBy(g, m, i);
