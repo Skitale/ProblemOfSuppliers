@@ -1,10 +1,11 @@
 package com.traning.task4;
 
+import com.traning.task4.genalg.GenAlg;
+import com.traning.task4.genalg.Genome;
 import com.traning.task4.parsers.Parser;
 import com.traning.task4.structures.Model;
 import com.traning.task4.structures.Solution;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -25,7 +26,7 @@ public class Main {
         for(Model m : models){
             System.out.print("task: " + m.getName() + " ... ");
             Solution solutionT1 = new AlgFoundMinStorage(m).solve();
-            Solution solutionT2 = new AlgFoundCosumersWithStorage(m).solve();
+            Solution solutionT2 = new AlgGenFoundConsumersWithStorage(m).solve();
             System.out.print( "min E for all consumers = " + solutionT1.getParamByKey("minE") + ", ");
             System.out.println("num consumers with max E = " + solutionT2.getParamByKey("numConsumers"));
         }
