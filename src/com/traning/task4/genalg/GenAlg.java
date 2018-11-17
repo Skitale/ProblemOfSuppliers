@@ -1,8 +1,7 @@
 package com.traning.task4.genalg;
 
-import com.traning.task4.GraphNet;
 import com.traning.task4.structures.Model;
-import com.traning.task4.threads.TaskPool;
+import com.traning.task4.structures.Solution;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,85 +39,90 @@ public class GenAlg {
     public Genome solve() {
         if (m == null) return null;
         generateInitPopulation();
+        Genome oldBestGenome = null;
         Genome bestGenome = null;
-        while (populationCount <= populationSize || bestGenome == null){
-            calcFitnessFuncForGenomes();
-            long stS = System.currentTimeMillis();
+        int countEqual = 0;
+        while ((populationCount <= populationSize && countEqual < 4) || bestGenome == null || isInfinSolution(bestGenome)){
+            /*long stCF = System.currentTimeMillis();*/
+            //calcFitnessFuncForGenomes();
+            /*long endCF = System.currentTimeMillis();
+            if(endCF - stCF != 0) {
+                System.out.println(populationCount + ".I)CALCULATION FITNESS FUNCTION : perform for " + (endCF - stCF));
+            }*/
+            /*long stS = System.currentTimeMillis();*/
             selection();
-            long endS = System.currentTimeMillis();
+            /*long endS = System.currentTimeMillis();
             if(endS - stS != 0) {
                 System.out.println("SELECTION : perform for " + (endS - stS));
             }
-            long stC = System.currentTimeMillis();
+            long stC = System.currentTimeMillis();*/
             crossing();
-            long endC = System.currentTimeMillis();
+            /*long endC = System.currentTimeMillis();
             if(endC - stC != 0) {
                 System.out.println("CROSSING : perform for " + (endC - stC));
-            }
+            }*/
             mutation();
 
             curPopulation.clear();
             curPopulation.addAll(kidsPopulation);
-            //curPopulation = kidsPopulation;
             kidsPopulation.clear();
-            long stCF = System.currentTimeMillis();
-            calcFitnessFuncForGenomes();
-            long endCF = System.currentTimeMillis();
+            /*stCF = System.currentTimeMillis();*/
+            //calcFitnessFuncForGenomes();
+            /*endCF = System.currentTimeMillis();
             if(endCF - stCF != 0) {
-                System.out.println(populationCount + ")CALCULATION FITNESS FUNCTION : perform for " + (endCF - stCF));
+                System.out.println(populationCount + ".II)CALCULATION FITNESS FUNCTION : perform for " + (endCF - stCF));
+            }*/
+
+            Genome tmp = null;
+            if(bestGenome != null) tmp = bestGenome.clone();
+            oldBestGenome = tmp;
+            /*long stB = System.currentTimeMillis();*/
+            bestGenome = getBestGenomeOrNull(oldBestGenome);
+            /*long endB = System.currentTimeMillis();
+            System.out.println( populationCount + ") current best record = " + getCountIsTrue(bestGenome));*/
+            if(getCountIsTrue(oldBestGenome) == getCountIsTrue(bestGenome)){
+                countEqual++;
+            } else {
+                countEqual = 0;
             }
 
-            long stB = System.currentTimeMillis();
-            bestGenome = getBestGenomeOrNull(bestGenome);
-            long endB = System.currentTimeMillis();
-            if(endB - stB != 0) {
+
+            /*if(endB - stB != 0) {
                 System.out.println(populationCount + ") SEARCH THE BEST : perform for " + (endB - stB));
-            }
+            }*/
 
             populationCount++;
         }
-
-
        return bestGenome;
     }
 
-    private void calcFitnessFuncForGenomes(){
-        TaskPool taskPool = new TaskPool();
-        int globDivided = m.getN() / 5 + 2;
-        int div = curPopulation.size() / globDivided + 1;
-        for (int i = 0; i < curPopulation.size() - div; i += div) {
-            int finalI = i;
-            taskPool.putNewTask(new Runnable() {
-                @Override
-                public void run() {
-                    int dFrom = finalI;
-                    int dTo = finalI + div;
-                    for(int j = dFrom; j < dTo; j++){
-                        fitnessFunction.getValueForGenome(curPopulation.get(j));
-                    }
-                }
-            });
+    private int getCountIsTrue(Genome genome) {
+        if(genome == null) return -1;
+        int s = 0;
+        for (int i = 0; i < genome.getSize(); i++) {
+            s += genome.getGen(i) ? 1 : 0;
         }
-
-        if ((globDivided * taskPool.getSize()) != curPopulation.size()) {
-            taskPool.putNewTask(new Runnable() {
-                @Override
-                public void run() {
-                    int dFrom = 4 * taskPool.getSize();
-                    int dTo = curPopulation.size();
-                    for(int j = dFrom; j < dTo; j++){
-                        fitnessFunction.getValueForGenome(curPopulation.get(j));
-                    }
-                }
-            });
-        }
-
-        taskPool.startAllTask();
-        taskPool.stopAllTask();
+        return s;
     }
 
+    private boolean isInfinSolution(Genome genome){
+        if(genome == null) return true;
+        Solution solution = fitnessFunction.getSolutionForGenome(genome);
+        int sol = solution.getMaxFlow();
+        int bound = solution.getUpperBoundForMaxFlow();
+        return sol != bound;
+    }
+
+    private void calcFitnessFuncForGenomes(){
+        for (int i = 0; i < curPopulation.size(); i ++) {
+            fitnessFunction.getValueForGenome(curPopulation.get(i));
+        }
+    }
+
+
     private Genome getBestGenomeOrNull(Genome oldBestGenome){
-        Genome bestGenome = null;
+        if(curPopulation.isEmpty()) return null;
+        Genome bestGenome = curPopulation.get(0);
         int minValue = Integer.MAX_VALUE;
         for(Genome genome : curPopulation){
             int value = fitnessFunction.getValueForGenome(genome);

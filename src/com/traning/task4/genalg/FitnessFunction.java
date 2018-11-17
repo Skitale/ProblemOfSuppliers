@@ -5,6 +5,7 @@ import com.traning.task4.GraphNet;
 import com.traning.task4.GraphUtils;
 import com.traning.task4.structures.Model;
 import com.traning.task4.structures.Solution;
+import javafx.util.Pair;
 
 import java.util.HashMap;
 
@@ -12,7 +13,7 @@ public class FitnessFunction {
     private GraphNet g;
     private Model m;
     private int maxStorage;
-    private HashMap<String, Integer> mapValue;
+    private HashMap<String, Pair<Integer, Solution>> mapValue;
     private AlgFordaFalc algFordaFalc;
 
     public FitnessFunction(Model m) {
@@ -30,14 +31,6 @@ public class FitnessFunction {
         if (getHashValueFor(genome) != -1) {
             return getHashValueFor(genome);
         }
-
-       /* algFordaFalc.addOrChangeStorageToConsumer(m, 5, maxStorage);
-        algFordaFalc.addOrChangeStorageToConsumer(m, 14, maxStorage);
-        for(int i = 0; i < m.getM(); i++){
-            if(i != 5 && i != 14){
-                algFordaFalc.addOrChangeStorageToConsumer(m, i, 0);
-            }
-        }*/
         for (int i = 0; i < m.getM(); i++) {
             if (genome.getGen(i)) {
                 algFordaFalc.addOrChangeStorageToConsumer(m, i, maxStorage);
@@ -45,26 +38,14 @@ public class FitnessFunction {
                 algFordaFalc.addOrChangeStorageToConsumer(m, i, 0);
             }
         }
-        //long st = System.currentTimeMillis();
         Solution sol = algFordaFalc.solve();
-        //long end = System.currentTimeMillis();
-        /*if(st - end != 0) {
-            System.out.println("FITNESS : perform for " + (end - st));
-        }*/
         int value = getFunValueForSolution(sol, genome);
-        setHashFor(genome, value);
+        setHashFor(genome, sol, value);
         return value;
     }
 
     public Solution getSolutionForGenome(Genome genome){
-        for (int i = 0; i < m.getM(); i++) {
-            if (genome.getGen(i)) {
-                algFordaFalc.addOrChangeStorageToConsumer(m, i, maxStorage);
-            } else {
-                algFordaFalc.addOrChangeStorageToConsumer(m, i, 0);
-            }
-        }
-        return algFordaFalc.solve();
+        return getHashSolutionFor(genome);
     }
 
     private int getFunValueForSolution(Solution solution, Genome genome) {
@@ -82,13 +63,21 @@ public class FitnessFunction {
         return size;
     }
 
-    private void setHashFor(Genome genome, int valueFunc) {
+    private void setHashFor(Genome genome, Solution solution, int valueFunc) {
         String genomeString = genome.toString();
-        mapValue.put(genomeString, valueFunc);
+        Pair<Integer, Solution> pair = new Pair<>(valueFunc, solution);
+        mapValue.put(genomeString, pair);
     }
 
     private int getHashValueFor(Genome genome) {
         String genomeString = genome.toString();
-        return mapValue.getOrDefault(genomeString, -1);
+        Pair<Integer, Solution> pair = new Pair<>(-1, null);
+        return mapValue.getOrDefault(genomeString, pair).getKey();
+    }
+
+    private Solution getHashSolutionFor(Genome genome){
+        String genomeString = genome.toString();
+        Pair<Integer, Solution> pair = new Pair<>(-1, null);
+        return mapValue.getOrDefault(genomeString, pair).getValue();
     }
 }
