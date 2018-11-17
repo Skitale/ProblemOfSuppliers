@@ -30,20 +30,7 @@ public class AlgGenFoundConsumersWithStorage {
         GenAlg ga = new GenAlg(generationSize, populationSize , m.getM(), 0.02d);
         ga.setModel(m);
         Genome genome = ga.solve();
-        Solution solution = ga.getFitnessFunction().getSolutionForGenome(genome);
-        if (solution.getMaxFlow() != solution.getUpperBoundForMaxFlow()) throw new UnsupportedOperationException("wrong solution");
-        List<Integer> listConsumers = getConsumersForStorage(genome);
-        StringBuilder sb = new StringBuilder();
-        sb.append(listConsumers.size()).append(" : {");
-        for(Integer i : listConsumers){
-            sb.append(i + 1);
-            if(!listConsumers.get(listConsumers.size() - 1).equals(i)){
-                sb.append(", ");
-            }
-        }
-        sb.append("}");
-        solution.addParam("numConsumers", sb.toString());
-        return solution;
+        return GenAlg.getSolutionForAlg(ga.getFitnessFunction(), genome);
     }
 
     private List<Integer> getConsumersForStorage(Genome genome){
