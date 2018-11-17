@@ -43,54 +43,25 @@ public class GenAlg {
         Genome bestGenome = null;
         int countEqual = 0;
         while ((populationCount <= populationSize && countEqual < 4) || bestGenome == null || isInfinSolution(bestGenome)){
-            /*long stCF = System.currentTimeMillis();*/
             //calcFitnessFuncForGenomes();
-            /*long endCF = System.currentTimeMillis();
-            if(endCF - stCF != 0) {
-                System.out.println(populationCount + ".I)CALCULATION FITNESS FUNCTION : perform for " + (endCF - stCF));
-            }*/
-            /*long stS = System.currentTimeMillis();*/
             selection();
-            /*long endS = System.currentTimeMillis();
-            if(endS - stS != 0) {
-                System.out.println("SELECTION : perform for " + (endS - stS));
-            }
-            long stC = System.currentTimeMillis();*/
             crossing();
-            /*long endC = System.currentTimeMillis();
-            if(endC - stC != 0) {
-                System.out.println("CROSSING : perform for " + (endC - stC));
-            }*/
             mutation();
 
             curPopulation.clear();
             curPopulation.addAll(kidsPopulation);
             kidsPopulation.clear();
-            /*stCF = System.currentTimeMillis();*/
             //calcFitnessFuncForGenomes();
-            /*endCF = System.currentTimeMillis();
-            if(endCF - stCF != 0) {
-                System.out.println(populationCount + ".II)CALCULATION FITNESS FUNCTION : perform for " + (endCF - stCF));
-            }*/
 
             Genome tmp = null;
             if(bestGenome != null) tmp = bestGenome.clone();
             oldBestGenome = tmp;
-            /*long stB = System.currentTimeMillis();*/
             bestGenome = getBestGenomeOrNull(oldBestGenome);
-            /*long endB = System.currentTimeMillis();
-            System.out.println( populationCount + ") current best record = " + getCountIsTrue(bestGenome));*/
             if(getCountIsTrue(oldBestGenome) == getCountIsTrue(bestGenome)){
                 countEqual++;
             } else {
                 countEqual = 0;
             }
-
-
-            /*if(endB - stB != 0) {
-                System.out.println(populationCount + ") SEARCH THE BEST : perform for " + (endB - stB));
-            }*/
-
             populationCount++;
         }
        return bestGenome;
