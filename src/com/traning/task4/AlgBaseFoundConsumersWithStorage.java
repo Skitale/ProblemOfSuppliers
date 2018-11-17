@@ -16,14 +16,15 @@ public class AlgBaseFoundConsumersWithStorage {
     public Solution solve() {
         int maxStorage = m.getSumA();
         GraphNet g = GraphUtils.getBasicWithStorageGraphStructureFromModel(m, maxStorage);
-        Solution solution = new AlgFordaFalc(g).solve();
+        AlgFordaFalc alg = new AlgFordaFalc(g);
+        Solution solution = alg.solve();
         if(solution.getUpperBoundForMaxFlow() != solution.getMaxFlow()) return null;
         List<Integer> listConsumers = new ArrayList<>();
         for(int i = 0; i < m.getM(); i++){
-            GraphUtils.deleteStorageBy(g, m, i);
-            solution = new AlgFordaFalc(g).solve();
+            alg.addOrChangeStorageToConsumer(m, i, 0);
+            solution = alg.solve();
             if(m.getSumS() != solution.getMaxFlow()){
-                GraphUtils.addStorageBy(g, m, i, maxStorage);
+                alg.addOrChangeStorageToConsumer(m, i, maxStorage);
                 listConsumers.add(i);
             }
         }
@@ -36,9 +37,7 @@ public class AlgBaseFoundConsumersWithStorage {
             }
         }
         sb.append("}");
-        if (solution != null) {
-            solution.addParam("numConsumers", sb.toString());
-        }
+        solution.addParam("numConsumers", sb.toString());
         return solution;
     }
 }

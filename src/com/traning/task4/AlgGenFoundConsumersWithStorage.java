@@ -18,12 +18,20 @@ public class AlgGenFoundConsumersWithStorage {
         GraphNet g = GraphUtils.getBasicWithStorageGraphStructureFromModel(m, m.getSumA());
         Solution sol = new AlgFordaFalc(g).solve();
         if(sol.getUpperBoundForMaxFlow() != sol.getMaxFlow()) return null;
-
-        GenAlg ga = new GenAlg(30, m.getM() * 2, m.getM(), 0.02d);
+        int generationSize;
+        int populationSize;
+        if(m.getN() < 10 && m.getM() < 10){
+            generationSize = m.getN();
+            populationSize = m.getM();
+        } else {
+            generationSize = Math.abs(m.getM() - m.getN());
+            populationSize = m.getM() > m.getN() ? m.getM() / m.getN() : m.getN() / m.getM();
+        }
+        GenAlg ga = new GenAlg(generationSize, populationSize , m.getM(), 0.02d);
         ga.setModel(m);
         Genome genome = ga.solve();
         Solution solution = ga.getFitnessFunction().getSolutionForGenome(genome);
-
+        if (solution.getMaxFlow() != solution.getUpperBoundForMaxFlow()) throw new UnsupportedOperationException("wrong solution");
         List<Integer> listConsumers = getConsumersForStorage(genome);
         StringBuilder sb = new StringBuilder();
         sb.append(listConsumers.size()).append(" : {");
@@ -34,9 +42,7 @@ public class AlgGenFoundConsumersWithStorage {
             }
         }
         sb.append("}");
-        if (solution != null) {
-            solution.addParam("numConsumers", sb.toString());
-        }
+        solution.addParam("numConsumers", sb.toString());
         return solution;
     }
 

@@ -38,10 +38,9 @@ public class AlgFordaFalc {
 
         List<Edge> incision = getIncisionGraph(modGraphNet);
         if(getBandwidthIncision(incision) <= 0){
-            System.out.println("error");
+            throw new IllegalStateException("Incorrect the algorithm answer");
         }
-        Solution solution = new Solution(getBandwidthIncision(incision), GraphUtils.getUpperBoundForMaxFlowBasic(graphNet));
-        return solution;
+        return new Solution(getBandwidthIncision(incision), GraphUtils.getUpperBoundForMaxFlowBasic(graphNet));
     }
 
     private void clear(){
