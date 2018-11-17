@@ -1,7 +1,5 @@
 package com.traning.task4;
 
-import com.traning.task4.genalg.GenAlg;
-import com.traning.task4.genalg.Genome;
 import com.traning.task4.parsers.Parser;
 import com.traning.task4.structures.Model;
 import com.traning.task4.structures.Solution;
@@ -25,10 +23,20 @@ public class Main {
         }*/
         for(Model m : models){
             System.out.print("task: " + m.getName() + " ... ");
-            //Solution solutionT1 = new AlgFoundMinStorage(m).solve();
+            long stCF = System.currentTimeMillis();
+            Solution solutionT1 = new AlgBaseFoundConsumersWithStorage(m).solve();
+            long endCF = System.currentTimeMillis();
+            if(endCF - stCF != 0) {
+                System.out.print(", general alg found min, perform for " + (endCF - stCF));
+            }
+            stCF = System.currentTimeMillis();
             Solution solutionT2 = new AlgGenFoundConsumersWithStorage(m).solve();
-            //System.out.print( "min E for all consumers = " + solutionT1.getParamByKey("minE") + ", ");
-            System.out.println("num consumers with max E = " + solutionT2.getParamByKey("numConsumers"));
+            endCF = System.currentTimeMillis();
+            if(endCF - stCF != 0) {
+                System.out.print(", genetic alg found min, perform for " + (endCF - stCF));
+            }
+            System.out.print( ", General = min E for all consumers = " + solutionT1.getParamByKey("numConsumers") + ", ");
+            System.out.println("Genetic = num consumers with max E = " + solutionT2.getParamByKey("numConsumers"));
         }
 
 
