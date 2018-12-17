@@ -15,6 +15,7 @@ public class FitnessFunction {
     private int maxStorage;
     private HashMap<String, Pair<Integer, Solution>> mapValue;
     private AlgFordaFalc algFordaFalc;
+    private boolean enableHash;
 
     public FitnessFunction(Model m) {
         this.m = m;
@@ -22,15 +23,40 @@ public class FitnessFunction {
         g = GraphUtils.getBasicWithStorageGraphStructureFromModel(m, 0);
         this.algFordaFalc = new AlgFordaFalc(g);
         mapValue = new HashMap<>();
+        enableHash = true;
     }
 
     public int getValueForGenome(Genome genome) {
-        if(genome == null) return Integer.MAX_VALUE;
-        if (genome.getSize() != m.getM()) throw new UnsupportedOperationException();
+        validateGenome(genome);
 
-        if (getHashValueFor(genome) != -1) {
+        if (enableHash && getHashValueFor(genome) != -1) {
             return getHashValueFor(genome);
         }
+
+        Solution sol = getSolutionFromGenome(genome);
+        int value = getFunValueForSolution(sol, genome);
+
+        if(enableHash) {
+            setHashFor(genome, sol, value);
+        }
+        return value;
+    }
+
+    public Solution getSolutionForGenome(Genome genome){
+        if(enableHash) {
+            return getHashSolutionFor(genome);
+        } else {
+            return getSolutionFromGenome(genome);
+        }
+    }
+
+    private Solution getSolutionFromGenome(Genome genome){
+        validateGenome(genome);
+        setStorages(genome);
+        return algFordaFalc.solve();
+    }
+
+    private void setStorages(Genome genome){
         for (int i = 0; i < m.getM(); i++) {
             if (genome.getGen(i)) {
                 algFordaFalc.addOrChangeStorageToConsumer(m, i, maxStorage);
@@ -38,15 +64,13 @@ public class FitnessFunction {
                 algFordaFalc.addOrChangeStorageToConsumer(m, i, 0);
             }
         }
-        Solution sol = algFordaFalc.solve();
-        int value = getFunValueForSolution(sol, genome);
-        setHashFor(genome, sol, value);
-        return value;
     }
 
-    public Solution getSolutionForGenome(Genome genome){
-        return getHashSolutionFor(genome);
+    private void validateGenome(Genome genome){
+        if(genome == null) throw new UnsupportedOperationException();
+        if (genome.getSize() != m.getM()) throw new UnsupportedOperationException();
     }
+
 
     private int getFunValueForSolution(Solution solution, Genome genome) {
         if (solution.getMaxFlow() != m.getSumS()) return Integer.MAX_VALUE;
@@ -79,5 +103,13 @@ public class FitnessFunction {
         String genomeString = genome.toString();
         Pair<Integer, Solution> pair = new Pair<>(-1, null);
         return mapValue.getOrDefault(genomeString, pair).getValue();
+    }
+
+    public boolean isEnableHash() {
+        return enableHash;
+    }
+
+    public void setEnableHash(boolean enableHash) {
+        this.enableHash = enableHash;
     }
 }
