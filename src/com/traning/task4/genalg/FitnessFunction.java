@@ -27,6 +27,7 @@ public class FitnessFunction {
     }
 
     public int getValueForGenome(Genome genome) {
+        if(genome == null) return Integer.MAX_VALUE;
         validateGenome(genome);
 
         if (enableHash && getHashValueFor(genome) != -1) {
@@ -67,7 +68,6 @@ public class FitnessFunction {
     }
 
     private void validateGenome(Genome genome){
-        if(genome == null) throw new UnsupportedOperationException();
         if (genome.getSize() != m.getM()) throw new UnsupportedOperationException();
     }
 
