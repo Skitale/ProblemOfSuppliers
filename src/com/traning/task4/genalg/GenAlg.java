@@ -19,6 +19,7 @@ public class GenAlg {
     private int populationCount;
     private double mutationProc;
     private Random random;
+    private int delCount;
 
     public GenAlg(int populationSize, int individualsSizeInPopulation, int genomeSize, double mutationProc) {
         this.populationSize = populationSize;
@@ -29,6 +30,7 @@ public class GenAlg {
         this.kidsPopulation = Collections.synchronizedList(new ArrayList<>());
         random = new Random();
         random.setSeed(System.currentTimeMillis());
+        this.delCount = genomeSize;
     }
 
     public void setModel(Model m) {
@@ -38,12 +40,18 @@ public class GenAlg {
 
     public Genome solve() {
         if (m == null) return null;
-        generateInitPopulation();
+        generateInitPopulation(true);
         Genome oldBestGenome = null;
         Genome bestGenome = null;
         int countEqual = 0;
-        while ((populationCount <= populationSize && countEqual < 4) || bestGenome == null || isInfinSolution(bestGenome)){
+        boolean secondGeneration = true;
+        while ((populationCount <= populationSize && countEqual < 5) || bestGenome == null || isInfinSolution(bestGenome)){
             //calcFitnessFuncForGenomes();
+            if((populationCount >= populationSize / 3 + 2 || countEqual == 4) && secondGeneration){
+                generateInitPopulation(false);
+                countEqual = 0;
+                secondGeneration = false;
+            }
             selection();
             crossing();
             mutation();
@@ -63,12 +71,13 @@ public class GenAlg {
                 countEqual = 0;
             }
             populationCount++;
+            delCount = getCountIsTrue(bestGenome);
         }
        return bestGenome;
     }
 
     private int getCountIsTrue(Genome genome) {
-        if(genome == null) return -1;
+        if(genome == null) return genomeSize;
         int s = 0;
         for (int i = 0; i < genome.getSize(); i++) {
             s += genome.getGen(i) ? 1 : 0;
@@ -122,11 +131,25 @@ public class GenAlg {
         return g;
     }
 
-    private void generateInitPopulation() {
+    private Genome generateCountTrueGenome(int del){
+        Genome g = new Genome(genomeSize);
+        int c = del;
+        while (c != 0){
+            int ind = random.nextInt(genomeSize);
+            if(!g.getGen(ind)){
+                g.setGen(ind);
+                c--;
+            }
+        }
+        return g;
+    }
+
+    private void generateInitPopulation(boolean isFirst) {
 
         //int i1 = (int)Math.floor(Math.random() * 10) + 1;
+        curPopulation.clear();
         for (int i = 0; i < individualsSizeInPopulation; i++) {
-            Genome g = generateRandomGenome();
+            Genome g = isFirst ? generateRandomGenome() : generateCountTrueGenome(delCount);
             curPopulation.add(g);
         }
         //System.out.println();
@@ -153,7 +176,10 @@ public class GenAlg {
     }
 
     private void cross(Genome g1, Genome g2){
-        Genome etalon = generateRandomGenome();
+        int ge1 = getCountIsTrue(g1);
+        int ge2 = getCountIsTrue(g2);
+        int s = ge1 > ge2 ? ge2 : ge1;
+        Genome etalon = generateCountTrueGenome(s);
         for(int i = 0; i < genomeSize; i++){
             if(etalon.getGen(i)){
                 swapForGenome(g1, i);
@@ -193,7 +219,10 @@ public class GenAlg {
 
     public static Solution getSolutionForAlg(FitnessFunction f, Genome genome){
         Solution solution = f.getSolutionForGenome(genome);
-        if (solution.getMaxFlow() != solution.getUpperBoundForMaxFlow()) throw new UnsupportedOperationException("wrong solution");
+        if (solution.getMaxFlow() != solution.getUpperBoundForMaxFlow()) {
+            solution.addParam("numConsumers", "The joint solution not found");
+            return solution;
+        }
         List<Integer> listConsumers = getConsumersForStorage(genome);
         StringBuilder sb = new StringBuilder();
         sb.append(listConsumers.size()).append(" : {");
