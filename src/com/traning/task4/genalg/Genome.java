@@ -41,6 +41,12 @@ public class Genome implements Cloneable {
         return genome;
     }
 
+    public void reset(){
+        for(int i = 0; i < array.length; i++){
+            array[i] = false;
+        }
+    }
+
     @Override
     public String toString() {
         return "Genome{" +
